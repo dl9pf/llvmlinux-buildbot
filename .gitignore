@@ -21,3 +21,5 @@ slave/llvmlinux/
 slave/twistd.hostname
 slave/twistd.log
 slave/twistd.pid
+*.pyc
+master/dummy

@@ -28,8 +28,8 @@ except ImportError:
   pass
 
 buildmaster_host = 'localhost'
-port = 9989
-slavename = 'main-slave'
+port = 9999
+slavename = 'dummy'
 passwd = 'pass1'
 keepalive = 600
 usepty = 0
