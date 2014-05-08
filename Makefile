@@ -6,8 +6,10 @@
 master-stop:
 	@buildbot stop master
 
-master-start:
+master-checkconfig:
 	buildbot checkconfig master
+
+master-start: master-checkconfig
 	buildbot start master
 
 master-restart: master-stop master-start

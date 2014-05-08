@@ -29,8 +29,8 @@ except ImportError:
 
 buildmaster_host = 'localhost'
 port = 9999
-slavename = 'dummy'
-passwd = 'pass1'
+slavename = 'localhost'
+passwd = 'localhost'
 keepalive = 600
 usepty = 0
 umask = None
