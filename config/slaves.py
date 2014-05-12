@@ -6,7 +6,7 @@ import config
 mastertype = config.defaults.get('defaults', "type")
 
 def create_slave(name, *args, **kwargs):
-    if name == "localhost" or name == "dummy":
+    if name == "localhost":
 	password = name
     else:
         password = config.passwords.get('Slave Passwords', name)
@@ -19,10 +19,12 @@ def get_build_slaves():
 	    create_slave("localhost", properties={'jobs': 2}, max_builds=1),
 	    create_slave("vm-builder", properties={'jobs': 2}, max_builds=1),
 	    # remote slaves
-	    create_slave("beaglebone", properties={'jobs': 4}, max_builds=1),
-	    create_slave("linux-next", properties={'jobs': 4}, max_builds=1),
+	    create_slave("target.vexpress", properties={'jobs': 4}, max_builds=1),
+	    create_slave("target.x86_64", properties={'jobs': 4}, max_builds=1),
+	    create_slave("target.beaglebone", properties={'jobs': 4}, max_builds=1),
+	    create_slave("target.x86_64-linux-next", properties={'jobs': 4}, max_builds=1),
 	    # more to be added below
-
+	    # ...
             ]
     else:
 	return [

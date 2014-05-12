@@ -11,4 +11,5 @@ pollers.read(os.path.join(os.path.dirname(__file__), 'pollers.cfg'))
 
 import slaves
 import changesources
+import builders
 
