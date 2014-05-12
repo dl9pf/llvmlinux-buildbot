@@ -49,6 +49,11 @@ def get_builders():
 			      logEnviron=False,
                               command=["git", "pull"],
                               description=["pull", "update"]))
+    afactory.addStep(ShellCommand(workdir="../common/",
+                              haltOnFailure=True,
+			      logEnviron=False,
+                              command=["make", "kernel-sync", "llvm-sync", "clang-sync"],
+                              description="sync common"))
     bld.append(
       BuilderConfig(name="1_llvmlinux",
       slavenames=defaultslaves,
