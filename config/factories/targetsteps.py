@@ -5,8 +5,8 @@ def get_targetsteps(target, llvmclang="", runtest=1):
     steps=[]
     TARGET="targets/%s" % target
     TARGET.strip('"')
-    steps.append(ShellCommand(command=["make", "mrproper"],
-			      description='mrproper',
+    steps.append(ShellCommand(command=["make", "llvm-sync", "clang-sync"],
+			      description='llvm/clang-sync',
 			      haltOnFailure=False,
 			      logEnviron=False,
 			      timeout=2400))

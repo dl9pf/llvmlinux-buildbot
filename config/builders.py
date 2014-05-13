@@ -8,6 +8,7 @@ from buildbot.steps.source.git import Git
 
 from buildbot.steps.shell import ShellCommand
 
+from buildbot.steps.transfer import FileUpload
 
 
 import config.factories.target as TF
@@ -35,10 +36,10 @@ def get_builders():
 			      clobberOnFailure=True))
     for i in TF.get_steps("vexpress", llvmclang="", runtest=1, runhwtest=0):
 	afactory.addStep(i)
-    afactory.addStep(ShellCommand(workdir="../", description="clone",
-				    haltOnFailure=False,
-				    logEnviron=False,
-                                    command=["if", "test", "!", "-d", "common", ";", "then", "git", "clone", "1_llvmlinux/build/.git", "common", ";", "fi"]))
+    afactory.addStep(ShellCommand(workdir="../",
+				haltOnFailure=False,
+				command="if test ! -d common ; then git clone 1_llvmlinux/build/.git common; fi",
+				description="checkout"))
     afactory.addStep(ShellCommand(workdir="../common/",
                               haltOnFailure=True,
 			      logEnviron=False,
@@ -79,12 +80,20 @@ def get_builders():
                              description='test-clang-boot-poweroff',
                              haltOnFailure=True,
 			     logEnviron=False,
-                             timeout=2400)
+                             timeout=2400),
+	ShellCommand(workdir="../common/targets/vexpress", 
+		     command="make list-config | tee | grep -E grep -E \"LLVM_COMMIT|CLANG_COMMIT\" > toolchain.cfg",
+                     description='export stable toolchain',
+                     haltOnFailure=False,
+		     logEnviron=False,
+                     timeout=2400),
+	FileUpload(slavesrc="../common/targets/vexpress/toolchain.cfg",
+                          masterdest="~/public_html/toolchain.cfg")
     ]
     
     # build factory for llvm builder
     factory_llvm = BuildFactory()
-    factory_llvm.addStep(ShellCommand(workdir="../common/clang/src/llvm", command=["git", "remote", "-v", "update"],
+    factory_llvm.addStep(ShellCommand(workdir="../common/toolchain/clang/src/llvm", command=["git", "remote", "-v", "update"],
                      description='gitup',
                      haltOnFailure=True,
                      logEnviron=False,
@@ -94,7 +103,7 @@ def get_builders():
                      clobberOnFailure=True,
 		     logEnviron=False,
                      workdir="../common/toolchain/clang/src/llvm"))
-    factory_llvm.addStep(ShellCommand(workdir="../common", command=["make", "-C", "targets/vexpress", "GIT_HARD_RESET=1", "llvm-clean"],
+    factory_llvm.addStep(ShellCommand(workdir="../common", command=["make", "-C", "targets/vexpress", "llvm-clean"],
                      description='llvm-clean',
                      haltOnFailure=True,
                      logEnviron=False,
@@ -103,7 +112,7 @@ def get_builders():
     
     # build factory for clang builder
     factory_clang = BuildFactory()
-    factory_clang.addStep(ShellCommand(workdir="../common/clang/src/clang", command=["git", "remote", "-v", "update"],
+    factory_clang.addStep(ShellCommand(workdir="../common/toolchain/clang/src/clang", command=["git", "remote", "-v", "update"],
                      description='gitup',
                      haltOnFailure=True,
                      logEnviron=False,
@@ -112,8 +121,8 @@ def get_builders():
                      mode='incremental',
 		     logEnviron=False,
                      clobberOnFailure=True,
-                     workdir="../common/toolchain/clang/src/llvm/tools/clang"))
-    factory_clang.addStep(ShellCommand(workdir="../common", command=["make", "-C", "targets/vexpress", "GIT_HARD_RESET=1", "clang-clean"],
+                     workdir="../common/toolchain/clang/src/clang"))
+    factory_clang.addStep(ShellCommand(workdir="../common", command=["make", "-C", "targets/vexpress", "clang-clean"],
                      description='clang-clean',
                      haltOnFailure=True,
                      logEnviron=False,
@@ -129,7 +138,26 @@ def get_builders():
       BuilderConfig(name="3_clang",
       slavenames=defaultslaves,
       factory=factory_clang))
+    
+    ### resetup Factories
+    factory_resetup_common = BuildFactory()
+    factory_resetup_common.addStep(ShellCommand(workdir="../",
+                                            description="rm",
+					    logEnviron=False,
+                                            command=["rm", "-rRf", "common"]))
+    factory_resetup_common.addStep(ShellCommand(workdir="../", description="clone",
+					    logEnviron=False,
+                                            command=["git", "clone", "1_llvmlinux/build/.git", "common"]))
+    factory_resetup_common.addStep(ShellCommand(workdir="../common",
+					    logEnviron=False,
+                                            timeout=3600,
+                                            description="refetch",
+                                            command=["make", "-C", "targets/vexpress", "clang-fetch", "qemu-fetch", "kernel-fetch"]))
 
+    bld.append(
+	BuilderConfig(name="0_resetup",
+	slavenames=defaultslaves,
+	factory=factory_resetup_common))
     return bld
 #    if mastertype == '"llvmlinux-bot"':
 	# REMOTE BUILDERS
