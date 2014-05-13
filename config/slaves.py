@@ -8,7 +8,7 @@ mastertype = config.defaults.get('defaults', "type")
 def create_slave(name, *args, **kwargs):
     if name == "localhost":
 	password = name
-    else:
+    elif mastertype == '"llvmlinux-bot"':
         password = config.passwords.get('Slave Passwords', name)
     return buildbot.buildslave.BuildSlave(name, password=password, *args, **kwargs)
 
