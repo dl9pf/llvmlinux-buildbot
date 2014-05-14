@@ -29,6 +29,28 @@ def get_builders():
     if mastertype == '"llvmlinux-bot"':
     	defaultslaves.append("vm-builder")
 
+    bfactory = BuildFactory()
+    bfactory.addStep(ShellCommand(workdir="./",
+				haltOnFailure=False,
+				command="if test ! -d llvmlinux ; then git clone http://git.linuxfoundation.org/llvmlinux.git llvmlinux; fi",
+				description="checkout"))
+    bfactory.addStep(ShellCommand(workdir="./llvmlinux/targets/x86_64-linux-next",
+				haltOnFailure=False,
+				command="make sync-all",
+				description="checkout2"))
+    bfactory.addStep(Git(repourl='git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git', 
+			      mode='incremental',
+			      alwaysUseLatest=True,
+			      logEnviron=False,
+			      workdir="./llvmlinux/targets/x86_64-linux-next/src/linux"))
+    for i in TF.get_steps("x86_64-linux-next", llvmclang="", runtest=1, runhwtest=0):
+	bfactory.addStep(i)
+    if mastertype == '"llvmlinux-bot"':
+	bld.append(
+		BuilderConfig(name="4_linux-next",
+		slavenames=["target.x86_64-linux-next"],
+		factory=bfactory))
+
     afactory = BuildFactory()
     afactory.addStep(Git(repourl='http://git.linuxfoundation.org/llvmlinux.git', 
 			      mode='incremental',
