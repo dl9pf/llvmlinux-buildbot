@@ -26,7 +26,8 @@ def get_builders():
 #	slavenames.append(i.slavename)
     defaultslaves=[]
     defaultslaves.append("localhost")
-    defaultslaves.append("vm-builder")
+    if mastertype == '"llvmlinux-bot"':
+    	defaultslaves.append("vm-builder")
 
     afactory = BuildFactory()
     afactory.addStep(Git(repourl='http://git.linuxfoundation.org/llvmlinux.git', 
