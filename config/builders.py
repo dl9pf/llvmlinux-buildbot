@@ -109,7 +109,7 @@ def get_builders():
 #			     logEnviron=False,
 #                             timeout=2400),
 	ShellCommand(workdir="../common/targets/vexpress", 
-		     command="make list-config | tee | grep -E grep -E \"LLVM_COMMIT|CLANG_COMMIT\" > toolchain.cfg",
+		     command="make llvm-settings | tee toolchain.cfg",
                      description='export stable toolchain',
                      haltOnFailure=False,
 		     logEnviron=False,
