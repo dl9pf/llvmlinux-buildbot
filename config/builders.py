@@ -72,7 +72,7 @@ def get_builders():
                              haltOnFailure=True,
 			     logEnviron=False,
                              timeout=2400),
-         ShellCommand(workdir="../common", command=["make", "-C", "targets/x86_64", "GIT_HARD_RESET=1", "kernel-sync"],
+         ShellCommand(workdir="../common", command=["make", "-C", "targets/x86_64", "CONFIG=", "GIT_HARD_RESET=1", "kernel-sync"],
                              description='kernel-clean',
                              haltOnFailure=True,
 			     logEnviron=False,
