@@ -61,7 +61,7 @@ def get_builders():
 			      alwaysUseLatest=True,
 			      logEnviron=False,
 			      clobberOnFailure=True))
-    for i in TF.get_steps("vexpress", llvmclang="", runtest=1, runhwtest=0):
+    for i in TF.get_steps("vexpress", llvmclang="stable", runtest=1, runhwtest=0):
 	afactory.addStep(i)
     afactory.addStep(ShellCommand(workdir="../",
 				haltOnFailure=False,
