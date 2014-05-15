@@ -13,7 +13,7 @@ def get_targetsteps(target, llvmclang="", runtest=1):
     cmd=["make", "-C", TARGET, "sync-all"]
     if llvmclang=="stable":
 	CONFIGADD=""
-	steps.append(ShellCommand(command="wget -O %s/toolchain.cfg http://buildbot.llvm.linuxfoundation.org/toolchain.cfg",
+	steps.append(ShellCommand(command="wget -O %s/toolchain.cfg http://buildbot.llvm.linuxfoundation.org/toolchain.cfg" % TARGET,
 			      description='toolchain.cfg',
 			      haltOnFailure=False,
 			      logEnviron=False,
