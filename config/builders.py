@@ -115,7 +115,7 @@ def get_builders():
 		     logEnviron=False,
                      timeout=2400),
 	FileUpload(slavesrc="../common/targets/vexpress/toolchain.cfg",
-                          masterdest="~/public_html/toolchain.cfg")
+                          masterdest="public_html/toolchain.cfg")
     ]
     
     # build factory for llvm builder
