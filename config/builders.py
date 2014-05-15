@@ -47,7 +47,7 @@ def get_builders():
 			      alwaysUseLatest=True,
 			      logEnviron=False,
 			      workdir="./build/targets/x86_64-linux-next/src/linux"))
-    for i in TF.get_steps("x86_64-linux-next", llvmclang="", runtest=1, runhwtest=0):
+    for i in TF.get_steps("x86_64-linux-next", llvmclang="stable", runtest=1, runhwtest=0):
 	bfactory.addStep(i)
     if mastertype == '"llvmlinux-bot"':
 	bld.append(

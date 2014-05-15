@@ -13,12 +13,12 @@ def get_targetsteps(target, llvmclang="", runtest=1):
     cmd=["make", "-C", TARGET, "sync-all"]
     if llvmclang=="stable":
 	CONFIGADD=""
-	# we D/L a CONFIG OVERLAY
-	cfgfile = urllib2.urlopen("http://88.198.106.157/llvmclang.cfg")
-	output = open('targets/vexpress/llvmclang.cfg','wb')
-	output.write(cfgfile.read())
-	output.close()
-	CONFIGADD="CONFIG=llvmclang.cfg"
+	steps.append(ShellCommand(command="wget -O %s/toolchain.cfg http://buildbot.llvm.linuxfoundation.org/toolchain.cfg",
+			      description='toolchain.cfg',
+			      haltOnFailure=False,
+			      logEnviron=False,
+			      timeout=2400))
+	CONFIGADD="CONFIG=toolchain.cfg"
 	CONFIGADD.strip('"')
 	cmd=["make", "-C", TARGET, CONFIGADD, "sync-all"]
     steps.append(ShellCommand(command=cmd,
